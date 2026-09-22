@@ -42,7 +42,6 @@ VoiceForm è stato progettato per lui.
 |---|---|
 | "Mi chiamo Mario Rossi" | nome=Mario, cognome=Rossi |
 | "Sono nato a Roma il 3 marzo 1970" | luogo_nascita=Roma, data_nascita=03/03/1970 |
-| "CF RSSMRA70A01H501U" | codice_fiscale=RSSMRA70A01H501U |
 | "Abito in via Garibaldi 5, CAP 20121" | indirizzo, cap |
 | "Oggi" | data_dichiarazione=data odierna |
 

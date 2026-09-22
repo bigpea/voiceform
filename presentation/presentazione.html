@@ -13,76 +13,143 @@
     --rose: #FF50A0;
     --green: #00C896;
   }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
     background: #050008;
     color: #fff;
     font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow: hidden;
   }
-  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 24px 80px; }
-  .brand {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 16px; margin-bottom: 40px;
-  }
-  .brand .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
-  .brand .logo .mark { color: var(--purple); }
-  .brand .team { text-align: right; font-size: 11px; line-height: 1.5; }
-  .brand .team .a { color: var(--purple-light); text-transform: uppercase; letter-spacing: 0.2em; font-weight: 600; }
-  .brand .team .b { color: rgba(255,255,255,0.45); }
 
-  /* Hero cover */
-  .hero { text-align: center; padding: 64px 0 72px; margin-bottom: 48px; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; background: rgba(161,0,255,0.04); }
-  .hero .eyebrow {
-    display: inline-block; border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.05); border-radius: 999px;
-    padding: 6px 18px; font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.25em; color: rgba(255,255,255,0.65);
+  /* ── Slideshow shell ── */
+  .deck {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
-  .hero h1 { font-size: 52px; font-weight: 800; letter-spacing: -0.03em; margin: 20px 0 12px; line-height: 1.1; }
-  .hero h1 .grad {
-    background: linear-gradient(90deg, var(--purple-light), var(--purple));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .hero .sub { font-size: 15px; color: rgba(255,255,255,0.55); margin: 0 auto 28px; max-width: 480px; }
-  .hero .authors {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 999px; padding: 8px 20px; font-size: 13px; color: rgba(255,255,255,0.8);
-  }
-  .hero .authors .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); display: inline-block; }
 
-  /* Slide cards */
-  .slide {
+  /* ── Top bar (brand + counter) ── */
+  .topbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .topbar .logo { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+  .topbar .logo .mark { color: var(--purple); }
+  .topbar .counter { font-size: 11px; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255,255,255,0.35); }
+
+  /* ── Slide area ── */
+  .slides-viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .slide-page {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: 24px 48px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(40px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .slide-page.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+  .slide-page.exit-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .slide-inner {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  /* ── Bottom nav ── */
+  .nav {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 18px;
-    background: rgba(255,255,255,0.02);
-    padding: 32px;
-    margin-bottom: 32px;
+    border-radius: 999px;
+    padding: 8px 20px;
+    font-size: 13px; font-weight: 600;
+    color: rgba(255,255,255,0.75);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
   }
-  .slide-head { border-bottom: 1px solid rgba(161,0,255,0.2); padding-bottom: 16px; margin-bottom: 22px; display: flex; align-items: baseline; gap: 14px; }
-  .slide-num { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3em; color: var(--purple-light); white-space: nowrap; }
-  .slide-head h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+  .nav-btn:hover { background: rgba(161,0,255,0.12); border-color: rgba(161,0,255,0.35); color: #fff; }
+  .nav-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
+  .nav-btn.primary { background: rgba(161,0,255,0.15); border-color: rgba(161,0,255,0.4); color: var(--purple-light); }
+  .nav-btn.primary:hover { background: rgba(161,0,255,0.28); }
 
-  .stat-box {
-    border: 1px solid rgba(161,0,255,0.3);
-    background: rgba(161,0,255,0.07);
-    border-radius: 14px; padding: 22px 24px; margin-bottom: 20px;
+  /* progress dots */
+  .nav-dots { display: flex; gap: 6px; align-items: center; }
+  .nav-dots .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.2s, width 0.2s;
   }
-  .stat-box .num { font-size: 40px; font-weight: 800; color: var(--purple-light); letter-spacing: -0.03em; line-height: 1; }
-  .stat-box .label { font-size: 14px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+  .nav-dots .dot.active { background: var(--purple-light); width: 18px; border-radius: 3px; }
 
-  .flow {
-    display: flex; align-items: center; gap: 0; margin: 20px 0;
-    flex-wrap: wrap;
+  /* ── Slide content components ── */
+  .brand-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; margin-bottom: 32px;
   }
-  .flow-step {
-    background: rgba(161,0,255,0.1); border: 1px solid rgba(161,0,255,0.25);
-    border-radius: 10px; padding: 12px 18px; font-size: 14px; font-weight: 600;
-    flex: 1; min-width: 140px; text-align: center;
-  }
+  .brand-header .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+  .brand-header .logo .mark { color: var(--purple); }
+  .brand-header .team { text-align: right; font-size: 11px; line-height: 1.5; }
+  .brand-header .team .a { color: var(--purple-light); text-transform: uppercase; letter-spacing: 0.2em; font-weight: 600; }
+  .brand-header .team .b { color: rgba(255,255,255,0.4); }
+
+  /* Cover */
+  .hero { text-align: center; padding: 72px 48px 80px; border: 1px solid rgba(255,255,255,0.08); border-radius: 28px; background: rgba(161,0,255,0.04); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .hero .eyebrow { display: inline-block; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); border-radius: 999px; padding: 8px 22px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255,255,255,0.65); }
+  .hero h1 { font-size: 80px; font-weight: 800; letter-spacing: -0.04em; margin: 28px 0 16px; line-height: 1; }
+  .hero h1 .grad { background: linear-gradient(90deg, var(--purple-light), var(--purple)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero .sub { font-size: 20px; color: rgba(255,255,255,0.55); margin: 0 auto 36px; max-width: 560px; line-height: 1.5; }
+  .hero .authors { display: inline-flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 12px 28px; font-size: 15px; color: rgba(255,255,255,0.8); }
+  .hero .authors .person { display: flex; align-items: center; gap: 8px; }
+  .hero .authors .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--purple); display: inline-block; flex-shrink: 0; }
+  .hero .authors .sep { color: rgba(255,255,255,0.2); }
+
+  /* Slide card */
+  .slide-card { border: 1px solid rgba(255,255,255,0.1); border-radius: 22px; background: rgba(255,255,255,0.02); padding: 48px; flex: 1; display: flex; flex-direction: column; }
+  .slide-head { border-bottom: 1px solid rgba(161,0,255,0.2); padding-bottom: 16px; margin-bottom: 16px; display: flex; align-items: baseline; gap: 20px; }
+  .slide-num { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; color: var(--purple-light); white-space: nowrap; line-height: 1; }
+  .slide-head h2 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; }
+
+  .stat-box { border: 1px solid rgba(161,0,255,0.3); background: rgba(161,0,255,0.07); border-radius: 16px; padding: 28px 32px; margin-bottom: 24px; }
+  .stat-box .num { font-size: 56px; font-weight: 800; color: var(--purple-light); letter-spacing: -0.04em; line-height: 1; }
+  .stat-box .label { font-size: 16px; color: rgba(255,255,255,0.6); margin-top: 6px; }
+
+  .flow { display: flex; align-items: stretch; margin: 20px 0; flex-wrap: wrap; gap: 0; }
+  .flow-step { background: rgba(161,0,255,0.1); border: 1px solid rgba(161,0,255,0.25); border-radius: 10px; padding: 12px 18px; font-size: 14px; font-weight: 600; flex: 1; min-width: 130px; text-align: center; display: flex; align-items: center; justify-content: center; min-height: 64px; }
   .flow-arrow { color: var(--purple-light); font-size: 20px; padding: 0 8px; flex-shrink: 0; }
 
   .before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
@@ -92,23 +159,17 @@
   .ba-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 6px; }
   .ba-box.before .ba-label { color: var(--rose); }
   .ba-box.after  .ba-label { color: var(--green); }
-  .ba-box p { margin: 0; font-size: 14px; color: rgba(255,255,255,0.8); }
+  .ba-box p { font-size: 14px; color: rgba(255,255,255,0.8); }
 
-  .tech-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
-  .tech-card { border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; }
-  .tech-card .icon { font-size: 22px; margin-bottom: 6px; }
+  .tech-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+  .tech-card { border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); border-radius: 16px; padding: 16px; }
   .tech-card h4 { font-size: 13px; font-weight: 700; margin: 0 0 4px; color: var(--purple-light); }
-  .tech-card p { font-size: 12px; color: rgba(255,255,255,0.55); margin: 0; }
+  .tech-card p { font-size: 12px; color: rgba(255,255,255,0.55); }
 
-  .demo-box {
-    border: 2px dashed rgba(161,0,255,0.4);
-    border-radius: 16px; padding: 48px 24px;
-    text-align: center; color: rgba(255,255,255,0.45);
-    font-size: 15px; letter-spacing: 0.05em; margin: 8px 0;
-  }
-  .demo-box .play { font-size: 36px; margin-bottom: 8px; display: block; }
+  .demo-box { border: 2px dashed rgba(161,0,255,0.4); border-radius: 16px; padding: 56px 24px; text-align: center; color: rgba(255,255,255,0.45); font-size: 15px; letter-spacing: 0.05em; margin: 8px 0; }
+  .demo-box .play { font-size: 40px; margin-bottom: 10px; display: block; }
 
-  .bullets { list-style: none; padding: 0; margin: 0; }
+  .bullets { list-style: none; }
   .bullets li { position: relative; padding-left: 20px; color: rgba(255,255,255,0.75); margin-bottom: 8px; font-size: 15px; }
   .bullets li::before { content: "›"; position: absolute; left: 0; color: var(--purple); font-weight: 700; }
 
@@ -116,169 +177,241 @@
   .close-card { border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 20px; text-align: center; }
   .close-card .name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
   .close-card .role { font-size: 12px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.15em; }
+  .qa-badge { display: inline-block; background: rgba(161,0,255,0.15); border: 1px solid rgba(161,0,255,0.35); border-radius: 999px; padding: 10px 28px; font-size: 15px; font-weight: 700; color: var(--purple-light); letter-spacing: 0.05em; margin-top: 20px; }
 
-  .qa-badge {
-    display: inline-block; background: rgba(161,0,255,0.15); border: 1px solid rgba(161,0,255,0.35);
-    border-radius: 999px; padding: 10px 28px; font-size: 15px; font-weight: 700;
-    color: var(--purple-light); letter-spacing: 0.05em; margin-top: 20px;
-  }
-
-  footer { text-align: center; margin-top: 48px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.2); }
-  footer .mark { color: var(--purple); }
+  .body-text { color: rgba(255,255,255,0.7); font-size: 17px; margin: 14px 0; }
+  .note { color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 12px; text-align: center; }
 
   @media (max-width: 640px) {
     .hero h1 { font-size: 34px; }
     .before-after, .tech-row, .close-grid { grid-template-columns: 1fr; }
     .flow { flex-direction: column; align-items: stretch; }
     .flow-arrow { text-align: center; padding: 4px 0; }
+    .topbar, .nav { padding: 14px 20px; }
+    .slide-page { padding: 20px; }
   }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <!-- Brand header -->
-  <div class="brand">
+<div class="deck">
+
+  <!-- Top bar -->
+  <div class="topbar">
     <span class="logo">Voice<span class="mark">Form</span></span>
-    <span class="team">
-      <span class="a">Hagenthon 2026</span><br />
-      <span class="b">Accenture Application Engineering</span>
-    </span>
+    <span class="counter" id="counter">1 / 6</span>
   </div>
 
-  <!-- SLIDE 1: Cover -->
-  <div class="hero">
-    <span class="eyebrow">Accessibilità Digitale</span>
-    <h1><span class="grad">Voice</span>Form</h1>
-    <p class="sub">Compila moduli PDF della PA italiana parlando. Nessuna tastiera, nessun mouse.</p>
-    <div class="authors">
-      <span class="dot"></span>
-      Roberto Sgobio &nbsp;·&nbsp; Sara Lanzafame
+  <!-- Slides viewport -->
+  <div class="slides-viewport">
+
+    <!-- SLIDE 1: Cover -->
+    <div class="slide-page active" data-index="0">
+      <div class="slide-inner">
+        <div class="hero">
+          <span class="eyebrow">Accessibilità Digitale · Hagenthon 2026</span>
+          <h1><span class="grad">Voice</span>Form</h1>
+          <p class="sub">Compila moduli PDF con il tuo feedback vocale. Nessuna tastiera, nessun mouse.</p>
+          <div class="authors">
+            <span class="person"><span class="dot"></span> Roberto Sgobio</span>
+            <span class="sep">·</span>
+            <span class="person"><span class="dot"></span> Sara Lanzafame</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- SLIDE 2: Il problema -->
+    <div class="slide-page" data-index="1">
+      <div class="slide-inner">
+        <div class="slide-card">
+          <header class="slide-head">
+            <span class="slide-num">01</span>
+            <h2>Il problema</h2>
+          </header>
+          <div class="stat-box" style="display:grid; grid-template-columns: auto 1fr; gap: 32px; align-items: center;">
+            <div>
+              <div class="num">67Mln</div>
+              <div style="font-size:13px; color:rgba(255,255,255,0.4); margin-top:6px; font-weight:600; letter-spacing:0.05em;">0,82% della popolazione</div>
+            </div>
+            <div class="label" style="border-left: 1px solid rgba(161,0,255,0.3); padding-left: 32px; font-size:17px; line-height:1.6;">persone al mondo che soffrono di disturbi legati al tremore</br> non riescono a compilare autonomamente form digitali o PDF</div>
+          </div>
+          <p class="body-text">Per chi ha tremore essenziale o emiplegia, interagire con tastiera e mouse su un modulo è spesso impossibile. Il risultato: dipendenza da terze persone per operazioni quotidiane come un'autocertificazione.</p>
+          <ul class="bullets" style="margin-top:14px;">
+            <li>Moduli con decine di campi da compilare</li>
+            <li>Nessuna alternativa vocale nativa nei portali istituzionali</li>
+            <li>La persona deve delegare ad altri anche operazioni semplici</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: La soluzione -->
+    <div class="slide-page" data-index="2">
+      <div class="slide-inner">
+        <div class="slide-card">
+          <header class="slide-head">
+            <span class="slide-num">02</span>
+            <h2>VoiceForm</h2>
+          </header>
+          <div class="flow">
+            <div class="flow-step">📄 Carica PDF</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">🎙️ Feedback vocale</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">✅ Compilazione automatica dei campi</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">⬇️ Scarica PDF</div>
+          </div>
+          <p class="body-text" style="text-align:center;">Un semplice feedback vocale come <em>"Mi chiamo Mario Rossi, nato a Roma il 3 marzo 1970"</em> ed in pochi secondi i campi del modulo vengono compilati automaticamente.</p>
+          <div class="before-after">
+            <div class="ba-box before">
+              <div class="ba-label">Prima</div>
+              <p>0% completamento autonomo — impossibile senza aiuto esterno</p>
+            </div>
+            <div class="ba-box after">
+              <div class="ba-label">Dopo</div>
+              <p>100% con la voce — l'utente completa da solo in pochi minuti</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Demo live -->
+    <div class="slide-page" data-index="3">
+      <div class="slide-inner">
+        <div class="slide-card">
+          <header class="slide-head">
+            <span class="slide-num">03</span>
+            <h2>Demo live</h2>
+          </header>
+          <div class="demo-box">
+            <span class="play">▶</span>
+            Apriamo il browser e mostriamo il flusso completo in tempo reale
+          </div>
+          <p class="note">Carica PDF · Attiva microfono · Parla · Vedi i campi compilarsi · Scarica</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Come funziona -->
+    <div class="slide-page" data-index="4">
+      <div class="slide-inner">
+        <div class="slide-card">
+          <header class="slide-head">
+            <span class="slide-num">04</span>
+            <h2>Come lo realizziamo</h2>
+          </header>
+          <div class="tech-row" style="margin-top:0;">
+            <div class="tech-card" style="padding:36px 32px; display:flex; flex-direction:column; justify-content:center;">
+              <h4 style="font-size:22px; margin-bottom:14px;">Web Speech API</h4>
+              <p style="font-size:17px; line-height:1.6;">Trascrizione vocale browser nativa, zero costo, zero API key</p>
+            </div>
+            <div class="tech-card" style="padding:36px 32px; display:flex; flex-direction:column; justify-content:center;">
+              <h4 style="font-size:22px; margin-bottom:14px;">Pattern Matching</h4>
+              <p style="font-size:17px; line-height:1.6;">Regex + confidence score server-side per mappare il parlato ai campi del PDF</p>
+            </div>
+            <div class="tech-card" style="padding:36px 32px; display:flex; flex-direction:column; justify-content:center;">
+              <h4 style="font-size:22px; margin-bottom:14px;">pdf-lib</h4>
+              <p style="font-size:17px; line-height:1.6;">Lettura campi AcroForm + compilazione PDF server-side, download immediato</p>
+            </div>
+          </div>
+          <div style="margin-top:28px; display:flex; flex-direction:column; gap:10px; text-align:center;">
+            <p style="color:rgba(255,255,255,0.6); font-size:16px;">
+              <strong style="color:var(--purple-light);">MVP1</strong> — Zero API key esterne.
+            </p>
+            <p style="color:rgba(255,255,255,0.6); font-size:16px;">
+              <strong style="color:var(--purple-light);">MVP2</strong> — Integrazione opzionale con API Anthropic / OpenAI per migliorare la comprensione del linguaggio naturale.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Chiusura -->
+    <div class="slide-page" data-index="5">
+      <div class="slide-inner">
+        <div class="slide-card">
+          <header class="slide-head">
+            <span class="slide-num">05</span>
+            <h2>Grazie</h2>
+          </header>
+          <div class="close-grid" style="flex:1;">
+            <div class="close-card" style="display:flex; flex-direction:column; justify-content:center;">
+              <div class="name" style="font-size:28px;">Roberto Sgobio</div>
+              <div class="role" style="font-size:15px; margin-top:8px;">Accenture Application Engineering</div>
+            </div>
+            <div class="close-card" style="display:flex; flex-direction:column; justify-content:center;">
+              <div class="name" style="font-size:28px;">Sara Lanzafame</div>
+              <div class="role" style="font-size:15px; margin-top:8px;">Accenture Application Engineering</div>
+            </div>
+          </div>
+          <div style="text-align:center; margin-top:28px;">
+            <span class="qa-badge" style="font-size:22px; padding:16px 48px;">Q &amp; A</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /slides-viewport -->
+
+  <!-- Bottom nav -->
+  <div class="nav">
+    <button class="nav-btn" id="btn-prev" disabled>← Indietro</button>
+    <div class="nav-dots" id="dots"></div>
+    <button class="nav-btn primary" id="btn-next">Avanti →</button>
   </div>
 
-  <!-- SLIDE 2: Il problema -->
-  <article class="slide">
-    <header class="slide-head">
-      <span class="slide-num">01</span>
-      <h2>Il problema</h2>
-    </header>
-    <div class="stat-box">
-      <div class="num">67M</div>
-      <div class="label">persone al mondo soffrono di disturbi legati al tremore — non riescono a compilare autonomamente form digitali o PDF.</div>
-    </div>
-    <p style="color:rgba(255,255,255,0.7); font-size:15px;">
-      Per chi ha tremore essenziale o emiplegia, interagire con tastiera e mouse su un modulo della Pubblica Amministrazione è spesso impossibile. Il risultato: dipendenza da terze persone per operazioni quotidiane come un'autocertificazione.
-    </p>
-    <ul class="bullets" style="margin-top:16px;">
-      <li>Moduli PA con decine di campi da compilare con precisione</li>
-      <li>Nessuna alternativa vocale nativa nei portali istituzionali</li>
-      <li>La persona deve delegare ad altri anche operazioni semplici</li>
-    </ul>
-  </article>
+</div><!-- /deck -->
 
-  <!-- SLIDE 3: La soluzione -->
-  <article class="slide">
-    <header class="slide-head">
-      <span class="slide-num">02</span>
-      <h2>La soluzione VoiceForm</h2>
-    </header>
-    <div class="flow">
-      <div class="flow-step">📄 Carica PDF</div>
-      <span class="flow-arrow">→</span>
-      <div class="flow-step">🎙️ Parla</div>
-      <span class="flow-arrow">→</span>
-      <div class="flow-step">✅ Campi compilati</div>
-      <span class="flow-arrow">→</span>
-      <div class="flow-step">⬇️ Scarica PDF</div>
-    </div>
-    <p style="color:rgba(255,255,255,0.7); font-size:15px; margin-top:16px;">
-      L'utente dice <em>"Mi chiamo Mario Rossi, nato a Roma il 3 marzo 1970"</em> e in meno di 2 secondi 4 campi vengono compilati automaticamente.
-    </p>
-    <div class="before-after">
-      <div class="ba-box before">
-        <div class="ba-label">Prima</div>
-        <p>0% completamento autonomo — impossibile senza aiuto esterno</p>
-      </div>
-      <div class="ba-box after">
-        <div class="ba-label">Dopo</div>
-        <p>100% con la voce — l'utente completa da solo in pochi minuti</p>
-      </div>
-    </div>
-  </article>
+<script>
+  const pages = document.querySelectorAll('.slide-page');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const counter = document.getElementById('counter');
+  const dotsEl = document.getElementById('dots');
+  const total = pages.length;
+  let current = 0;
 
-  <!-- SLIDE 4: Demo live -->
-  <article class="slide">
-    <header class="slide-head">
-      <span class="slide-num">03</span>
-      <h2>Demo live</h2>
-    </header>
-    <div class="demo-box">
-      <span class="play">▶</span>
-      Apriamo il browser e mostriamo il flusso completo in tempo reale
-    </div>
-    <p style="color:rgba(255,255,255,0.5); font-size:13px; margin-top:12px; text-align:center;">
-      Carica PDF · Attiva microfono · Parla · Vedi i campi compilarsi · Scarica
-    </p>
-  </article>
+  // Build dots
+  pages.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(d);
+  });
 
-  <!-- SLIDE 5: Come funziona tecnicamente -->
-  <article class="slide">
-    <header class="slide-head">
-      <span class="slide-num">04</span>
-      <h2>Come lo realizziamo</h2>
-    </header>
-    <div class="tech-row">
-      <div class="tech-card">
-        <div class="icon">🎙️</div>
-        <h4>Web Speech API</h4>
-        <p>Trascrizione vocale browser nativa, italiano, zero costo, zero API key</p>
-      </div>
-      <div class="tech-card">
-        <div class="icon">🔍</div>
-        <h4>Pattern Matching</h4>
-        <p>Regex + confidence score server-side per mappare il parlato ai campi del PDF</p>
-      </div>
-      <div class="tech-card">
-        <div class="icon">📄</div>
-        <h4>pdf-lib</h4>
-        <p>Lettura campi AcroForm + compilazione PDF server-side, download immediato</p>
-      </div>
-    </div>
-    <p style="color:rgba(255,255,255,0.55); font-size:13px; margin-top:20px;">
-      <strong style="color:var(--purple-light);">MVP1</strong> — Zero API key esterne. &nbsp;|&nbsp;
-      <strong style="color:var(--purple-light);">MVP2</strong> — Integrazione opzionale con API Anthropic / OpenAI per migliorare comprensione linguaggio naturale e gestire moduli complessi.
-    </p>
-  </article>
+  function goTo(next) {
+    if (next < 0 || next >= total) return;
+    pages[current].classList.add('exit-left');
+    pages[current].classList.remove('active');
+    setTimeout(() => pages[current === next ? current : current].classList.remove('exit-left'), 300);
+    current = next;
+    pages[current].classList.add('active');
+    pages[current].classList.remove('exit-left');
+    updateUI();
+  }
 
-  <!-- SLIDE 6: Chiusura -->
-  <article class="slide">
-    <header class="slide-head">
-      <span class="slide-num">05</span>
-      <h2>Grazie</h2>
-    </header>
-    <p style="color:rgba(255,255,255,0.7); font-size:15px; margin-bottom:24px;">
-      VoiceForm è stato sviluppato in 5 ore durante Hagenthon 2026, tema Accessibilità Digitale.
-    </p>
-    <div class="close-grid">
-      <div class="close-card">
-        <div class="name">Roberto Sgobio</div>
-        <div class="role">Accenture Application Engineering</div>
-      </div>
-      <div class="close-card">
-        <div class="name">Sara Lanzafame</div>
-        <div class="role">Accenture Application Engineering</div>
-      </div>
-    </div>
-    <div style="text-align:center;">
-      <span class="qa-badge">Q &amp; A</span>
-    </div>
-  </article>
+  function updateUI() {
+    counter.textContent = (current + 1) + ' / ' + total;
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === total - 1;
+    btnNext.textContent = current === total - 1 ? 'Fine' : 'Avanti →';
+    dotsEl.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  }
 
-  <footer>
-    Voice<span class="mark">Form</span> &middot; Roberto Sgobio e Sara Lanzafame &middot; Hagenthon 2026
-  </footer>
+  btnPrev.addEventListener('click', () => goTo(current - 1));
+  btnNext.addEventListener('click', () => goTo(current + 1));
 
-</div>
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); goTo(current - 1); }
+  });
+
+  updateUI();
+</script>
+
 </body>
 </html>
