@@ -1,0 +1,9 @@
+node_modules/
+.next/
+*.local
+.env
+.env.*
+!.env.example
+dist/
+out/
+tsconfig.tsbuildinfo
